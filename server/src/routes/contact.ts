@@ -1,0 +1,2 @@
+import {Router} from 'express';import {z} from 'zod';import {pool} from '../db/pool.js';
+const router=Router();router.post('/',async(req,res,next)=>{try{const body=z.object({name:z.string().trim().min(2).max(120),email:z.string().email().max(190),message:z.string().trim().min(10).max(5000)}).parse(req.body);await pool.query('INSERT INTO contact_messages(name,email,message) VALUES(?,?,?)',[body.name,body.email,body.message]);res.status(201).json({ok:true})}catch(e){next(e)}});export default router;

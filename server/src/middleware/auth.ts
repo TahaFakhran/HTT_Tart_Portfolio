@@ -1,0 +1,3 @@
+import type {NextFunction,Request,Response} from 'express';import jwt from 'jsonwebtoken';
+export type AuthRequest=Request&{adminId?:number};
+export function requireAdmin(req:AuthRequest,res:Response,next:NextFunction){const header=req.headers.authorization;const token=header?.startsWith('Bearer ')?header.slice(7):'';if(!token)return res.status(401).json({error:'Authentication required'});try{const payload=jwt.verify(token,process.env.JWT_SECRET??'') as jwt.JwtPayload;if(typeof payload.sub!=='string')throw new Error('Invalid token');req.adminId=Number(payload.sub);next()}catch{return res.status(401).json({error:'Invalid or expired session'})}}

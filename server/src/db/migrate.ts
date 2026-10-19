@@ -1,0 +1,3 @@
+import 'dotenv/config';import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';import {pool} from './pool.js';
+const here=path.dirname(fileURLToPath(import.meta.url));const migrationPath=path.resolve(here,'../../../database/migrations/001_initial.sql');
+try{const sql=fs.readFileSync(migrationPath,'utf8');const statements=sql.split(';').map(s=>s.trim()).filter(Boolean);for(const statement of statements){await pool.query(statement)}console.log('Database schema applied successfully.')}catch(e){console.error('Migration failed:',e);process.exitCode=1}finally{await pool.end()}
